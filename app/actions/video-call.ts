@@ -140,43 +140,44 @@ export async function updateSessionStatus(sessionId: string, status: "in_progres
 
 // Generate Agora token
 export async function generateAgoraToken(channelName: string, userId: string) {
-  const appId = process.env.NEXT_PUBLIC_AGORA_APP_ID; // Usually public ID is needed for client? No, server uses App ID + Cert.
+  const appId = process.env.NEXT_PUBLIC_AGORA_APP_ID;
   const appCertificate = process.env.AGORA_APP_CERTIFICATE;
 
   if (!appId || !appCertificate) {
-    console.warn("Agora credentials missing in .env");
-    // Return mock for development if missing
-    return {
-      token: "mock-token",
-      channelName,
-      userId,
-      appId: appId || "mock-app-id"
-    };
+    console.error("Missing Agora credentials: NEXT_PUBLIC_AGORA_APP_ID or AGORA_APP_CERTIFICATE");
+    throw new Error("Video service configuration error");
   }
 
-  // Dynamic import to avoid build issues if package missing/server-only
-  const { RtcTokenBuilder, RtcRole } = await import('agora-access-token');
+  try {
+    // Dynamic import to avoid build issues if package missing/server-only
+    const { RtcTokenBuilder, RtcRole } = await import('agora-access-token');
 
-  const role = RtcRole.PUBLISHER;
-  const expirationTimeInSeconds = 3600;
-  const currentTimestamp = Math.floor(Date.now() / 1000);
-  const privilegeExpiredTs = currentTimestamp + expirationTimeInSeconds;
+    const role = RtcRole.PUBLISHER;
+    const expirationTimeInSeconds = 3600;
+    const currentTimestamp = Math.floor(Date.now() / 1000);
+    const privilegeExpiredTs = currentTimestamp + expirationTimeInSeconds;
 
-  const token = RtcTokenBuilder.buildTokenWithAccount(
-    appId,
-    appCertificate,
-    channelName,
-    userId,
-    role,
-    privilegeExpiredTs
-  );
+    // Use buildTokenWithUid for numeric UIDs or buildTokenWithAccount for string UIDs
+    // Since we pass string userId (e.g. "teacher", "student" or UUID), we use buildTokenWithAccount
+    const token = RtcTokenBuilder.buildTokenWithAccount(
+      appId,
+      appCertificate,
+      channelName,
+      userId,
+      role,
+      privilegeExpiredTs
+    );
 
-  return {
-    token,
-    channelName,
-    userId,
-    appId,
-  };
+    return {
+      token,
+      channelName,
+      userId,
+      appId,
+    };
+  } catch (error) {
+    console.error("Failed to generate Agora token:", error);
+    throw new Error("Failed to initialize video session");
+  }
 }
 
 // Get available video conferencing providers

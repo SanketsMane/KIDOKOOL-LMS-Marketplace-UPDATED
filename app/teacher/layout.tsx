@@ -16,6 +16,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Loader2 } from "lucide-react";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
+import { GeminiChat } from "@/components/ai/GeminiChat";
 
 export default function TeacherLayout({
   children,
@@ -82,6 +83,7 @@ export default function TeacherLayout({
           {children}
         </div>
       </SidebarInset>
+      <GeminiChat />
     </SidebarProvider>
   );
 }

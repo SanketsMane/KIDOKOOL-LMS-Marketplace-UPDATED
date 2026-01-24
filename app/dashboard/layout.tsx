@@ -8,6 +8,7 @@ import { useAuth } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { Loader2 } from "lucide-react";
+import { GeminiChat } from "@/components/ai/GeminiChat";
 
 export default function DashboardLayout({ children }: { children: ReactNode }) {
   const { data: session, isPending } = useAuth();
@@ -50,6 +51,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
           </div>
         </div>
       </SidebarInset>
+      <GeminiChat />
     </SidebarProvider>
   );
 }

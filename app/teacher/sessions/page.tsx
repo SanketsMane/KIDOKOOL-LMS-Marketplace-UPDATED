@@ -56,58 +56,60 @@ export default async function TeacherSessionsPage() {
 
       {/* Quick Actions */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Card className="border-blue-200 bg-blue-50/50 dark:border-blue-900 dark:bg-blue-950/20">
-          <CardHeader className="pb-3">
-            <CardTitle className="text-base flex items-center gap-2">
-              <Calendar className="h-4 w-4 text-blue-600" />
-              Quick Schedule
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-sm text-muted-foreground mb-3">
-              Create sessions that students can book instantly
-            </p>
+        <Card className="border-blue-200 bg-blue-50/50 dark:border-blue-900 dark:bg-blue-950/20 hover:bg-blue-100/50 transition-colors">
+          <CardContent className="p-4 flex items-center justify-between gap-4">
+            <div>
+              <div className="font-semibold flex items-center gap-2 text-blue-700 dark:text-blue-300 mb-1">
+                <Calendar className="h-4 w-4" />
+                Quick Schedule
+              </div>
+              <p className="text-xs text-muted-foreground">
+                Create openings for instant booking
+              </p>
+            </div>
             <Link href="/teacher/sessions/create">
-              <Button variant="outline" size="sm" className="w-full">
-                Create Open Slot
+              <Button size="sm" variant="outline" className="h-8 bg-background border-blue-200 hover:bg-blue-50">
+                <Plus className="h-3 w-3 mr-1" />
+                Add Slot
               </Button>
             </Link>
           </CardContent>
         </Card>
 
-        <Card className="border-green-200 bg-green-50/50 dark:border-green-900 dark:bg-green-950/20">
-          <CardHeader className="pb-3">
-            <CardTitle className="text-base flex items-center gap-2">
-              <Clock className="h-4 w-4 text-green-600" />
-              Availability
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-sm text-muted-foreground mb-3">
-              Set your recurring weekly schedule
-            </p>
+        <Card className="border-green-200 bg-green-50/50 dark:border-green-900 dark:bg-green-950/20 hover:bg-green-100/50 transition-colors">
+          <CardContent className="p-4 flex items-center justify-between gap-4">
+            <div>
+              <div className="font-semibold flex items-center gap-2 text-green-700 dark:text-green-300 mb-1">
+                <Clock className="h-4 w-4" />
+                Availability
+              </div>
+              <p className="text-xs text-muted-foreground">
+                Set your recurring weekly hours
+              </p>
+            </div>
             <Link href="/teacher/sessions/availability">
-              <Button variant="outline" size="sm" className="w-full">
-                Manage Schedule
+              <Button size="sm" variant="outline" className="h-8 bg-background border-green-200 hover:bg-green-50">
+                <Settings className="h-3 w-3 mr-1" />
+                Manage
               </Button>
             </Link>
           </CardContent>
         </Card>
 
-        <Card className="border-purple-200 bg-purple-50/50 dark:border-purple-900 dark:bg-purple-950/20">
-          <CardHeader className="pb-3">
-            <CardTitle className="text-base flex items-center gap-2">
-              <TrendingUp className="h-4 w-4 text-purple-600" />
-              Analytics
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-sm text-muted-foreground mb-3">
-              View your session performance metrics
-            </p>
+        <Card className="border-purple-200 bg-purple-50/50 dark:border-purple-900 dark:bg-purple-950/20 hover:bg-purple-100/50 transition-colors">
+          <CardContent className="p-4 flex items-center justify-between gap-4">
+            <div>
+              <div className="font-semibold flex items-center gap-2 text-purple-700 dark:text-purple-300 mb-1">
+                <TrendingUp className="h-4 w-4" />
+                Analytics
+              </div>
+              <p className="text-xs text-muted-foreground">
+                Check your session performance
+              </p>
+            </div>
             <Link href="/teacher/analytics?tab=sessions">
-              <Button variant="outline" size="sm" className="w-full">
-                View Analytics
+              <Button size="sm" variant="outline" className="h-8 bg-background border-purple-200 hover:bg-purple-50">
+                View
               </Button>
             </Link>
           </CardContent>
@@ -152,11 +154,11 @@ export default async function TeacherSessionsPage() {
             </TabsContent>
 
             <TabsContent value="completed">
-              <SessionsList status="Completed" />
+              <SessionsList status="completed" />
             </TabsContent>
 
             <TabsContent value="cancelled">
-              <SessionsList status="Cancelled" />
+              <SessionsList status="cancelled" />
             </TabsContent>
           </Tabs>
         </CardContent>

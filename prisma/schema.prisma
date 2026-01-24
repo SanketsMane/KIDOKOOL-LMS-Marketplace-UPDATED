@@ -53,6 +53,9 @@ model User {
   whiteboardElements          WhiteboardElement[]
   whiteboardParticipation     WhiteboardParticipant[]  @relation("WhiteboardParticipants")
   createdWhiteboards          Whiteboard[]             @relation("WhiteboardCreator")
+  
+  // AI Chat History
+  aiConversations             AiConversation[]
 
   @@map("user")
 }
@@ -1271,4 +1274,33 @@ enum ReportType {
   Monthly
   Quarterly
   Yearly
+}
+
+// --- Gemini AI Chat ---
+
+model AiConversation {
+  id        String      @id @default(cuid())
+  userId    String
+  title     String      @default("New Chat")
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+  
+  user      User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  messages  AiMessage[]
+
+  @@index([userId])
+  @@map("ai_conversations")
+}
+
+model AiMessage {
+  id             String         @id @default(cuid())
+  conversationId String
+  role           String         // "user" or "model"
+  content        String         @db.Text
+  createdAt      DateTime       @default(now())
+  
+  conversation   AiConversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+
+  @@index([conversationId])
+  @@map("ai_messages")
 }

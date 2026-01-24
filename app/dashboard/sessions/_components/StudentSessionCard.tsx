@@ -206,7 +206,7 @@ export function StudentSessionCard({ booking }: StudentSessionCardProps) {
           )}
           
           {canJoin && !session.meetingUrl && (
-            <Link href={`/video-room/${session.id}`} className="flex-1">
+            <Link href={`/video-call/${session.id}`} className="flex-1">
               <Button className="w-full" size="lg">
                 <Video className="mr-2 h-5 w-5" />
                 Join Session

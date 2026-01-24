@@ -16,14 +16,27 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "@/components/ui/tabs";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle, 
+} from "@/components/ui/card";
 import { Calendar } from "@/components/ui/calendar";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { CalendarIcon, Loader2 } from "lucide-react";
+
+import { CalendarIcon, Loader2, ArrowLeft } from "lucide-react";
 import { format } from "date-fns";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
@@ -151,288 +164,291 @@ export function CreateSessionForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-      {/* Session Type */}
-      <div className="space-y-3">
-        <Label>Session Type</Label>
-        <RadioGroup
-          value={sessionType}
-          onValueChange={(value: string) => {
-            setSessionType(value as "specific" | "available");
-            setValue("sessionType", value as "specific" | "available");
+
+    <div className="space-y-8 pb-8">
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
+        
+        {/* Page Header with Actions */}
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b pb-6">
+          <div className="flex items-center gap-4">
+            <Button
+              type="button" 
+              variant="ghost" 
+              size="icon" 
+              onClick={() => router.back()}
+              className="-ml-2 h-10 w-10 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800"
+            >
+              <ArrowLeft className="h-5 w-5 text-muted-foreground" />
+            </Button>
+            <div>
+              <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-slate-100">Create Live Session</h1>
+              <p className="text-muted-foreground">
+                Schedule a new 1-on-1 tutoring session
+              </p>
+            </div>
+          </div>
+          <div className="flex items-center gap-3">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => router.back()}
+              disabled={loading}
+            >
+              Cancel
+            </Button>
+            <Button
+              type="submit"
+              disabled={loading}
+              className="bg-blue-600 hover:bg-blue-700 min-w-[140px]"
+            >
+              {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              Create Session
+            </Button>
+          </div>
+        </div>
+
+        <Tabs 
+          defaultValue="specific" 
+          value={sessionType} 
+          onValueChange={(val) => {
+            setSessionType(val as "specific" | "available");
+            setValue("sessionType", val as "specific" | "available");
           }}
-          className="grid grid-cols-2 gap-4"
+          className="w-full"
         >
-          <div>
-            <RadioGroupItem
-              value="specific"
-              id="specific"
-              className="peer sr-only"
-            />
-            <Label
-              htmlFor="specific"
-              className="flex flex-col items-center justify-between rounded-lg border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary cursor-pointer"
-            >
-              <CalendarIcon className="mb-3 h-6 w-6" />
-              <div className="text-center">
-                <p className="font-semibold">Specific Time</p>
-                <p className="text-xs text-muted-foreground mt-1">
-                  Schedule for a specific date and time
-                </p>
-              </div>
-            </Label>
+          <div className="mb-8">
+            <TabsList className="grid w-full grid-cols-2 lg:w-[400px] h-10">
+              <TabsTrigger value="specific">One-Time Session</TabsTrigger>
+              <TabsTrigger value="available">Weekly Availability</TabsTrigger>
+            </TabsList>
           </div>
-          <div>
-            <RadioGroupItem
-              value="available"
-              id="available"
-              className="peer sr-only"
-            />
-            <Label
-              htmlFor="available"
-              className="flex flex-col items-center justify-between rounded-lg border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary cursor-pointer"
-            >
-              <CalendarIcon className="mb-3 h-6 w-6" />
-              <div className="text-center">
-                <p className="font-semibold">Available Slot</p>
-                <p className="text-xs text-muted-foreground mt-1">
-                  Students can book anytime
-                </p>
-              </div>
-            </Label>
-          </div>
-        </RadioGroup>
-      </div>
 
-      {/* Title */}
-      <div className="space-y-2">
-        <Label htmlFor="title">Session Title *</Label>
-        <Input
-          id="title"
-          placeholder="e.g., React Hooks Deep Dive"
-          {...register("title")}
-        />
-        {errors.title && (
-          <p className="text-sm text-destructive">{errors.title.message}</p>
-        )}
-      </div>
+          <TabsContent value="specific" className="space-y-8">
+            
+            {/* Section 2: Basic Info (CARD) */}
+            <Card className="border shadow-sm bg-white dark:bg-card">
+              <CardHeader className="pb-4 border-b">
+                <CardTitle className="text-lg font-medium">Basic Information</CardTitle>
+                <CardDescription>
+                  Details that help students find your session
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="grid gap-6 pt-6">
+                <div className="grid md:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <Label htmlFor="title">Session Title</Label>
+                    <Input
+                      id="title"
+                      placeholder="e.g. Advanced React Patterns"
+                      {...register("title")}
+                    />
+                    {errors.title && (
+                      <p className="text-sm text-destructive">{errors.title.message}</p>
+                    )}
+                  </div>
 
-      {/* Description */}
-      <div className="space-y-2">
-        <Label htmlFor="description">Description</Label>
-        <Textarea
-          id="description"
-          placeholder="Describe what students will learn in this session..."
-          rows={4}
-          {...register("description")}
-        />
-        {errors.description && (
-          <p className="text-sm text-destructive">{errors.description.message}</p>
-        )}
-      </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="subject">Subject</Label>
+                    <Select onValueChange={(value) => setValue("subject", value)}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select a subject" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {SUBJECTS.map((subject) => (
+                          <SelectItem key={subject} value={subject}>
+                            {subject}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    {errors.subject && (
+                      <p className="text-sm text-destructive">{errors.subject.message}</p>
+                    )}
+                  </div>
+                </div>
 
-      {/* Subject */}
-      <div className="space-y-2">
-        <Label htmlFor="subject">Subject *</Label>
-        <Select onValueChange={(value) => setValue("subject", value)}>
-          <SelectTrigger>
-            <SelectValue placeholder="Select a subject" />
-          </SelectTrigger>
-          <SelectContent>
-            {SUBJECTS.map((subject) => (
-              <SelectItem key={subject} value={subject}>
-                {subject}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-        {errors.subject && (
-          <p className="text-sm text-destructive">{errors.subject.message}</p>
-        )}
-      </div>
-
-      {/* Date and Time (only for specific sessions) */}
-      {sessionType === "specific" ? (
-        <div className="grid md:grid-cols-2 gap-4">
-          <div className="space-y-2">
-            <Label>Date *</Label>
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button
-                  variant="outline"
-                  className={cn(
-                    "w-full justify-start text-left font-normal",
-                    !selectedDate && "text-muted-foreground"
+                <div className="space-y-2">
+                  <Label htmlFor="description">Description (Optional)</Label>
+                  <Textarea
+                    id="description"
+                    placeholder="Briefly describe what students will learn..."
+                    rows={4}
+                    className="resize-none"
+                    {...register("description")}
+                  />
+                  {errors.description && (
+                    <p className="text-sm text-destructive">{errors.description.message}</p>
                   )}
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Section 3: Schedule & Details (CARD) */}
+            <Card className="border shadow-sm bg-white dark:bg-card">
+              <CardHeader className="pb-4 border-b">
+                <CardTitle className="text-lg font-medium flex items-center gap-2">
+                  <CalendarIcon className="h-5 w-5 text-muted-foreground" />
+                  Schedule & Pricing
+                </CardTitle>
+                <CardDescription>
+                  When do you want to host this session?
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="grid gap-6 pt-6">
+                <div className="grid md:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <Label>Session Date</Label>
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant="outline"
+                          className={cn(
+                            "w-full justify-start text-left font-normal",
+                            !selectedDate && "text-muted-foreground"
+                          )}
+                        >
+                          <CalendarIcon className="mr-2 h-4 w-4" />
+                          {selectedDate ? format(selectedDate, "PPP") : "Pick a date"}
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-0" align="start">
+                        <Calendar
+                          mode="single"
+                          selected={selectedDate}
+                          onSelect={(date) => {
+                            setSelectedDate(date);
+                            setValue("scheduledDate", date);
+                          }}
+                          disabled={(date) => {
+                            const today = new Date();
+                            today.setHours(0, 0, 0, 0);
+                            return date < today;
+                          }}
+                          initialFocus
+                        />
+                      </PopoverContent>
+                    </Popover>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="time">Start Time</Label>
+                    <Select onValueChange={(value) => setValue("scheduledTime", value)}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select start time" />
+                      </SelectTrigger>
+                      <SelectContent className="max-h-60">
+                        {TIME_SLOTS.map((slot) => (
+                          <SelectItem key={slot.value} value={slot.value}>
+                            {slot.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+
+                <div className="grid md:grid-cols-3 gap-6">
+                  <div className="space-y-2">
+                    <Label htmlFor="duration">Duration</Label>
+                    <Select
+                      defaultValue="60"
+                      onValueChange={(value) => setValue("duration", Number(value))}
+                    >
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {DURATIONS.map((duration) => (
+                          <SelectItem key={duration.value} value={duration.value.toString()}>
+                            {duration.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="price">Price (INR)</Label>
+                    <div className="relative">
+                      <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">
+                        ₹
+                      </span>
+                      <Input
+                        id="price"
+                        type="number"
+                        min="100"
+                        step="1"
+                        className="pl-7"
+                        placeholder="500"
+                        {...register("price", { valueAsNumber: true })}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="timezone">Timezone</Label>
+                    <Select
+                      defaultValue={Intl.DateTimeFormat().resolvedOptions().timeZone}
+                      onValueChange={(value) => setValue("timezone", value)}
+                    >
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Asia/Kolkata">India (IST)</SelectItem>
+                        <SelectItem value="UTC">UTC</SelectItem>
+                        <SelectItem value="America/New_York">Eastern Time (ET)</SelectItem>
+                        <SelectItem value="America/Los_Angeles">Pacific Time (PT)</SelectItem>
+                        <SelectItem value="Europe/London">London (GMT)</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Section 4: Earnings Preview */}
+            <div className="bg-slate-50 dark:bg-slate-900 border rounded-lg p-6 flex flex-col md:flex-row items-center justify-between gap-4">
+              <div className="space-y-1">
+                <h4 className="font-medium text-slate-900 dark:text-slate-100">Estimated Earnings</h4>
+                <p className="text-sm text-muted-foreground">
+                  After 15% platform fee deduction
+                </p>
+              </div>
+              <div className="text-right">
+                <span className="text-3xl font-bold text-green-600 dark:text-green-400">
+                  ₹{((watchedPrice || 0) * 0.85).toFixed(0)}
+                </span>
+                <p className="text-sm text-muted-foreground">
+                  Net Amount
+                </p>
+              </div>
+            </div>
+          </TabsContent>
+
+          <TabsContent value="available">
+            <Card className="border-dashed border-2 shadow-none bg-transparent">
+              <CardContent className="pt-12 pb-12 text-center space-y-6">
+                <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-full w-fit mx-auto">
+                  <CalendarIcon className="h-8 w-8 text-blue-600 dark:text-blue-400" />
+                </div>
+                <div className="space-y-2 max-w-md mx-auto">
+                  <h3 className="font-semibold text-lg">Weekly Availability Schedule</h3>
+                  <p className="text-muted-foreground text-sm">
+                    Set up a recurring schedule to let students book you automatically during your available hours.
+                  </p>
+                </div>
+                <Button
+                  onClick={() => router.push("/teacher/sessions/availability")}
+                  className="bg-blue-600 hover:bg-blue-700"
                 >
-                  <CalendarIcon className="mr-2 h-4 w-4" />
-                  {selectedDate ? format(selectedDate, "PPP") : "Pick a date"}
+                  Configure Available Hours
                 </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-auto p-0" align="start">
-                <Calendar
-                  mode="single"
-                  selected={selectedDate}
-                  onSelect={(date) => {
-                    setSelectedDate(date);
-                    setValue("scheduledDate", date);
-                  }}
-                  disabled={(date) => date < new Date()}
-                  initialFocus
-                />
-              </PopoverContent>
-            </Popover>
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="time">Time *</Label>
-            <Select onValueChange={(value) => setValue("scheduledTime", value)}>
-              <SelectTrigger>
-                <SelectValue placeholder="Select time" />
-              </SelectTrigger>
-              <SelectContent className="max-h-60">
-                {TIME_SLOTS.map((slot) => (
-                  <SelectItem key={slot.value} value={slot.value}>
-                    {slot.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-        </div>
-      ) : (
-        <div className="rounded-lg border bg-blue-50/50 dark:bg-blue-950/20 p-6 text-center space-y-4">
-          <div className="p-3 bg-blue-100 dark:bg-blue-900 rounded-full w-fit mx-auto">
-            <CalendarIcon className="h-6 w-6 text-blue-600 dark:text-blue-400" />
-          </div>
-          <div>
-            <h3 className="font-semibold text-lg">Set Recurring Availability</h3>
-            <p className="text-muted-foreground max-w-sm mx-auto mt-1">
-              To let students book sessions anytime, set up your weekly recurring schedule.
-            </p>
-          </div>
-          <Button
-            type="button"
-            variant="default"
-            onClick={() => router.push("/teacher/sessions/availability")}
-          >
-            Manage Weekly Schedule
-          </Button>
-        </div>
-      )}
-
-      {/* Duration and Price */}
-      <div className="grid md:grid-cols-2 gap-4">
-        <div className="space-y-2">
-          <Label htmlFor="duration">Duration *</Label>
-          <Select
-            defaultValue="60"
-            onValueChange={(value) => setValue("duration", Number(value))}
-          >
-            <SelectTrigger>
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              {DURATIONS.map((duration) => (
-                <SelectItem key={duration.value} value={duration.value.toString()}>
-                  {duration.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          {errors.duration && (
-            <p className="text-sm text-destructive">{errors.duration.message}</p>
-          )}
-        </div>
-
-        <div className="space-y-2">
-          <Label htmlFor="price">Price (INR) *</Label>
-          <div className="relative">
-            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">
-              ₹
-            </span>
-            <Input
-              id="price"
-              type="number"
-              min="100"
-              step="1"
-              className="pl-7"
-              placeholder="500"
-              {...register("price", { valueAsNumber: true })}
-            />
-          </div>
-          {errors.price && (
-            <p className="text-sm text-destructive">{errors.price.message}</p>
-          )}
-        </div>
-      </div>
-
-      {/* Summary */}
-      <div className="rounded-lg border bg-muted/50 p-4">
-        <h3 className="font-semibold mb-3">Session Summary</h3>
-        <div className="space-y-2 text-sm">
-          <div className="flex justify-between">
-            <span className="text-muted-foreground">Duration:</span>
-            <span className="font-medium">{watchedDuration} minutes</span>
-          </div>
-          <div className="flex justify-between">
-            <span className="text-muted-foreground">Price:</span>
-            <span className="font-medium">${watchedPrice || 0}</span>
-          </div>
-          <div className="flex justify-between">
-            <span className="text-muted-foreground">You&apos;ll receive (after 15% fee):</span>
-            <span className="font-semibold text-green-600">
-              ₹{((watchedPrice || 0) * 0.85).toFixed(2)}
-            </span>
-          </div>
-        </div>
-      </div>
-
-      {/* Timezone */}
-      <div className="space-y-2">
-        <Label htmlFor="timezone">Timezone</Label>
-        <Select
-          defaultValue={Intl.DateTimeFormat().resolvedOptions().timeZone}
-          onValueChange={(value) => setValue("timezone", value)}
-        >
-          <SelectTrigger>
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="America/New_York">Eastern Time (ET)</SelectItem>
-            <SelectItem value="America/Chicago">Central Time (CT)</SelectItem>
-            <SelectItem value="America/Denver">Mountain Time (MT)</SelectItem>
-            <SelectItem value="America/Los_Angeles">Pacific Time (PT)</SelectItem>
-            <SelectItem value="Europe/London">London (GMT)</SelectItem>
-            <SelectItem value="Europe/Paris">Paris (CET)</SelectItem>
-            <SelectItem value="Asia/Tokyo">Tokyo (JST)</SelectItem>
-            <SelectItem value="Asia/Kolkata">India (IST)</SelectItem>
-            <SelectItem value="UTC">UTC</SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
-
-      {sessionType === "specific" && (
-        <div className="flex gap-3">
-          <Button
-            type="button"
-            variant="outline"
-            onClick={() => router.back()}
-            disabled={loading}
-            className="flex-1"
-          >
-            Cancel
-          </Button>
-          <Button
-            type="submit"
-            disabled={loading}
-            className="flex-1"
-          >
-            {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            Create Session
-          </Button>
-        </div>
-      )}
-    </form>
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </Tabs>
+      </form>
+    </div>
   );
 }

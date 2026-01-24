@@ -51,9 +51,20 @@ export function NavMain({
           {items.map((item) => (
             <SidebarMenuItem key={item.title}>
               {(() => {
-                const isActive = item.url === "/admin"
-                  ? pathname === "/admin"
-                  : pathname.startsWith(item.url);
+                // Check if any OTHER item has a URL that is more specific (longer) than this one
+                // and also starts with this one's URL, AND matches the current pathname.
+                // If so, this item is "shadowed" by the more specific one.
+                const isShadowed = items.some(otherItem => 
+                  otherItem.url !== item.url && 
+                  otherItem.url.startsWith(item.url) && 
+                  pathname.startsWith(otherItem.url)
+                );
+
+                const isActive = !isShadowed && (
+                  (item.url === "/admin" || item.url === "/teacher" || item.url === "/dashboard")
+                    ? pathname === item.url
+                    : pathname.startsWith(item.url)
+                );
                 return (
                   <SidebarMenuButton tooltip={item.title} asChild>
                     <Link
